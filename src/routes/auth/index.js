@@ -20,7 +20,8 @@ router.post('/login', (request, response) => {
             response.json(
                 {
                     message: `You are logged in, have fun :).`,
-                    token: authFunctions.generateToken({id: data.id})
+                    token: authFunctions.generateToken({id: data.id}),
+                    data
                 }
             )
         })

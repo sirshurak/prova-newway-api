@@ -7,6 +7,7 @@ const express = require('express');
 const router = express.Router();
 const User = require('../../DB/Models/user');
 const authFunctions = require('../auth/functions');
+const generate = require('../../DB/factories/user');
 
 router.post('/', (request, response) => {
     const aUser = request.body;
@@ -65,13 +66,9 @@ router.get('/', (request, response) => {
 router.get('/:id', (request, response) => {
     User.findById(request.params.id)
         .then(
-            User.findById(request.params.id)
-                .then(data => {
-                    response.json(data);
-                })        
-                .catch(error => {
-                    response.status(500).json(error);
-                })
+            data => data ? 
+            response.json(data)
+            : response.status(404).json({message: `User of id ${request.params.id} doesn't exists.`})
         )
         .catch(() => { 
             response.status(404).json({message: `User of id ${request.params.id} doesn't exists.`})
@@ -80,7 +77,11 @@ router.get('/:id', (request, response) => {
 
 router.delete('/:id', (request, response) => {
     User.findById(request.params.id)
-        .then(data => data ? response.json(data) : response.status(404).json({message: `User of id ${request.params.id} doesn't exists.`}))
+        .then(data => data ? 
+            data.deleteOne()
+                .then(data => response.json(data))
+                .catch((error) => response.status(404).json({message: `Can't delete User of id ${request.params.id}.`})) 
+            : response.status(404).json({message: `User of id ${request.params.id} doesn't exists.`}))
         .catch(() => { 
             response.status(404).json({message: `User of id ${request.params.id} doesn't exists.`})
         });
@@ -92,6 +93,16 @@ router.delete('/', (request, response) => {
         .catch(() => { 
             response.status(404).json({message: `Can't delete all documents of Product.`})
         });
+});
+
+router.get('/factory/:qty', (request, response) => {
+    try {
+        response.json(generate(request.params.qty));
+        console.log(`Created ${request.params.qty} user(s)`);
+    }
+    catch(error){
+        response.status(500).json(error);
+    }
 });
 
 

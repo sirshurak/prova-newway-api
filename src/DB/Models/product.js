@@ -34,6 +34,10 @@ const ProductSchema = mongoose.Schema({
             type: String,
             required: true
         },
+        userName: {
+            type: String,
+            required: true
+        },
         rate: {
             type: Number,
             required: true

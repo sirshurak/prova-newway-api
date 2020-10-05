@@ -19,7 +19,8 @@ const UserSchema = mongoose.Schema({
     password: {
         type: String,
         require: true,
-        select: false
+        select: false,
+        lowercase: true
     },
     joinAt: {
         type: Date,

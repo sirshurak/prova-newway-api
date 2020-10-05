@@ -14,7 +14,8 @@ router.post('/:id', authMiddleware, (request, response) => {
     Product.findById(request.params.id)
         .then((data) =>{            
             data.avaliations.push({ 
-                userId: request.userId, 
+                userId: request.body.userId, 
+                userName: request.body.userName,
                 rate: Math.max(Math.min(request.body.rate, 5),0),
                 description: request.body.description
             });
