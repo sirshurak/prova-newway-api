@@ -121,5 +121,15 @@ router.get('/factory/:qty', (request, response) => {
     }
 });
 
+router.get('/count', (request, response) => {
+    Product.countDocuments()
+        .then(data => {
+            response.json(data);
+        })
+        .catch(error => {
+            response.status(500).json(error);
+        });
+});
+
 
 module.exports = router;
