@@ -36,6 +36,16 @@ router.get('/', (request, response) => {
         .catch((error) => response.status(500).json(error));
 });
 
+router.get('/count', (request, response) => {
+    Product.countDocuments()
+        .then(data => {
+            response.json(data);
+        })
+        .catch(error => {
+            response.status(500).json(error);
+        });
+});
+
 router.get('/:id', (request, response) => {
     Product.findById(request.params.id)
         .then(data => data ? response.json(data) : response.status(404).json({message: `Product of id ${request.params.id} doesn't exists.`}))
@@ -119,16 +129,6 @@ router.get('/factory/:qty', (request, response) => {
     catch(error){
         response.status(500).json(error);
     }
-});
-
-router.get('/count', (request, response) => {
-    Product.countDocuments()
-        .then(data => {
-            response.json(data);
-        })
-        .catch(error => {
-            response.status(500).json(error);
-        });
 });
 
 

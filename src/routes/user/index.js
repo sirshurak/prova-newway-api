@@ -63,6 +63,16 @@ router.get('/', (request, response) => {
         });
 });
 
+router.get('/count', (request, response) => {
+    User.countDocuments()
+        .then(data => {
+            response.json(data);
+        })
+        .catch(error => {
+            response.status(500).json(error);
+        });
+});
+
 router.get('/:id', (request, response) => {
     User.findById(request.params.id)
         .then(
@@ -103,16 +113,6 @@ router.get('/factory/:qty', (request, response) => {
     catch(error){
         response.status(500).json(error);
     }
-});
-
-router.get('/count', (request, response) => {
-    User.countDocuments()
-        .then(data => {
-            response.json(data);
-        })
-        .catch(error => {
-            response.status(500).json(error);
-        });
 });
 
 
