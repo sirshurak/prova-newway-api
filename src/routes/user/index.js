@@ -168,7 +168,6 @@ router.delete('/', (request, response) => {
 router.get('/factory/:qty', (request, response) => {
     try {
         response.json(generate(request.params.qty));
-        console.log(`Created ${request.params.qty} user(s)`);
     }
     catch(error){
         response.status(500).json(error);
