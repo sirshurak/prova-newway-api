@@ -9,6 +9,14 @@ const User = require('../../DB/Models/user');
 const authFunctions = require('./functions');
 const authMiddleware = require('../../middlewares/auth');
 
+/**
+ * Efetua login.
+ * 
+ * Rota: /auth/login
+ * Método: POST
+ * @param {{email: string, password: string}} login
+ * @returns {message: string, token: string, data: user}
+ */
 router.post('/login', (request, response) => {
     const { email, password } = request.body;
     
@@ -27,5 +35,6 @@ router.post('/login', (request, response) => {
         })
         .catch(() => response.status(400).json({ message: `User not found.`}))
 });
+
 
 module.exports = router;

@@ -10,6 +10,16 @@ const mongoose = require('mongoose');
 const ObjectId = mongoose.Types.ObjectId;
 const Product = require('../../../DB/Models/product');
 
+/**
+ * Cria uma avaliação de Produto.
+ * 
+ * Rota: /product/avaliation/:id
+ * Método: POST
+ * Middleware: Auth
+ * @param {Avaliation} avaliation
+ * @param {number} params.id id do Produto.
+ * @returns {Avaliation}
+ */
 router.post('/:id', authMiddleware, (request, response) => {
     Product.findById(request.params.id)
         .then((data) =>{            
@@ -32,6 +42,16 @@ router.post('/:id', authMiddleware, (request, response) => {
         });
 });
 
+/**
+ * Remove uma avaliação de Produto.
+ * 
+ * Rota: /product/avaliation/:id?id=:id
+ * Método: DELETE
+ * Middleware: Auth
+ * @param {number} params.id id do Produto.
+ * @param {number} query.id id da Avaliação.
+ * @returns {Avaliation}
+ */
 router.delete('/:id', authMiddleware, (request, response) => {
     Product.findById(request.params.id)
         .then(data => {

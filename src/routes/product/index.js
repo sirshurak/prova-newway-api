@@ -9,6 +9,16 @@ const authMiddleware = require('../../middlewares/auth');
 const Product = require('../../DB/Models/product');
 const generate = require('../../DB/factories/product');
 
+/**
+ * Retorna uma lista de Produtos.
+ * 
+ * Rota: /product?limit=:limit&offset=:offset&orderby=:orderby
+ * Método: GET
+ * @param {number} query.limit quantidade de registros.
+ * @param {number} query.offset registros à serem ignorados.
+ * @param {string} query.orderby ordenação no formato "key=value|key=value"
+ * @returns {{data: Products[], limit: number, offset: number, total: number}}
+ */
 router.get('/', (request, response) => {
     let limit = Math.min(request.query.limit ? +request.query.limit : 10, 50);
     let offset = request.query.offset ? +request.query.offset : 0;
@@ -26,16 +36,24 @@ router.get('/', (request, response) => {
     };
 
     prepareQuery().countDocuments()
-        .then(count => total = count);
-
-    prepareQuery()
-        .skip(offset)
-        .sort(orderbyObj)
-        .limit(limit)
-        .then((data) => response.json({data, limit, offset, total}))
-        .catch((error) => response.status(500).json(error));
+        .then(count => {
+            total = count;
+            prepareQuery()
+                .skip(offset)
+                .sort(orderbyObj)
+                .limit(limit)
+                .then((data) => response.json({data, limit, offset, total}))
+                .catch((error) => response.status(500).json(error));
+        });   
 });
 
+/**
+ * Retorna uma contagem de Produtos.
+ * 
+ * Rota: /product/count
+ * Método: GET
+ * @returns {number}
+ */
 router.get('/count', (request, response) => {
     Product.countDocuments()
         .then(data => {
@@ -46,6 +64,14 @@ router.get('/count', (request, response) => {
         });
 });
 
+/**
+ * Retorna um Produto.
+ * 
+ * Rota: /product/:id
+ * Método: GET
+ * @param {number} params.id id do Produto.
+ * @returns {Product}
+ */
 router.get('/:id', (request, response) => {
     Product.findById(request.params.id)
         .then(data => data ? response.json(data) : response.status(404).json({message: `Product of id ${request.params.id} doesn't exists.`}))
@@ -54,6 +80,14 @@ router.get('/:id', (request, response) => {
         });
 });
 
+/**
+ * Cria um Produto.
+ * 
+ * Rota: /product
+ * Método: POST
+ * @param {Product} product
+ * @returns {Product}
+ */
 router.post('/', authMiddleware, (request, response) => {
     const aProduct = request.body;
     const product = new Product({
@@ -72,6 +106,14 @@ router.post('/', authMiddleware, (request, response) => {
         });
 });
 
+/**
+ * Remove um Produto.
+ * 
+ * Rota: /product/:id
+ * Método: DELETE
+ * @param {number} params.id id do Produto.
+ * @returns {Product}
+ */
 router.delete('/:id', authMiddleware, (request, response) => {
     Product.findById(request.params.id)
         .then(
@@ -88,6 +130,13 @@ router.delete('/:id', authMiddleware, (request, response) => {
         });
 });
 
+/**
+ * Remove todos os Produtos.
+ * 
+ * Rota: /product
+ * Método: DELETE
+ * @returns {{deleted: number}}
+ */
 router.delete('/', authMiddleware, (request, response) => {
     Product.deleteMany()
         .then((data) => response.json({deleted: data.deletedCount}))
@@ -96,6 +145,15 @@ router.delete('/', authMiddleware, (request, response) => {
         });
 });
 
+/**
+ * Atualiza um Produto.
+ * 
+ * Rota: /product
+ * Método: PATCH
+ * @param {number} params.id id do Produto.
+ * @param {Product} product
+ * @returns {Product}
+ */
 router.patch('/:id', (request, response) => {
     Product.findById(request.params.id)
         .then(() =>{
@@ -122,6 +180,14 @@ router.patch('/:id', (request, response) => {
         });
 });
 
+/**
+ * Cria uma lista de Produtos aleatórios.
+ * 
+ * Rota: /product/factory/:qty
+ * Método: GET
+ * @param {number} params.qty quantidade de Produtos à serem criados.
+ * @returns {[Product]}
+ */
 router.get('/factory/:qty', (request, response) => {
     try{
         response.json(generate(request.params.qty));
